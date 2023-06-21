@@ -1,0 +1,129 @@
+digraph G {
+    node [shape=box];
+
+    // Nodos de inicio
+    Inicio [label="Inicio"];
+    Inicio -> Presupuesto;
+    Inicio -> Clima;
+    Inicio -> Idioma;
+    Inicio -> CantidadEstrellas;
+    Inicio -> Reporte;
+
+    // Nodos de presupuesto
+    Presupuesto -> Barato [label="Monto < 2500"];
+    Presupuesto -> Moderado [label="2500 <= Monto <= 5000"];
+    Presupuesto -> Caro [label="Monto > 5000"];
+
+    // Nodos de búsqueda por presupuesto - Barato
+    //Barato -> TipoHabitacion;
+    TipoHabitacion -> Distancia;
+    Distancia -> LlevaVehiculo;
+    LlevaVehiculo -> DiasEstadia;
+    DiasEstadia -> NumeroPersonas;
+    NumeroPersonas -> TiemposComida;
+    TiemposComida -> ConclusionCarroSimple [label="TipoHabitacion = 'simple'"];
+    TiemposComida -> ConclusionCarroDoble [label="TipoHabitacion = 'doble'"];
+
+    // Nodos de búsqueda por presupuesto - Moderado
+    //Moderado -> TipoHabitacionM;
+    TipoHabitacionM -> ClimaM;
+    ClimaM -> DistanciaM;
+    DistanciaM -> LlevaVehiculoM;
+    LlevaVehiculoM -> DiasEstadiaM;
+    DiasEstadiaM -> NumeroPersonasM;
+    NumeroPersonasM -> TiemposComidaM;
+    TiemposComidaM -> ConclusionCarroSimpleM [label="TipoHabitacion = 'simple'"];
+    TiemposComidaM -> ConclusionCarroDobleM [label="TipoHabitacion = 'doble'"];
+
+    // Nodos de búsqueda por presupuesto - Caro
+    //Caro -> TipoHabitacionC;
+    TipoHabitacionC -> CantidadEstrellasC;
+    CantidadEstrellasC -> ClimaC;
+    ClimaC -> DistanciaC;
+    DistanciaC -> LlevaVehiculoC;
+    LlevaVehiculoC -> DiasEstadiaC;
+    DiasEstadiaC -> NumeroPersonasC;
+    NumeroPersonasC -> TiemposComidaC;
+    TiemposComidaC -> ConclusionCarroSimpleC [label="TipoHabitacion = 'simple'"];
+    TiemposComidaC -> ConclusionCarroDobleC [label="TipoHabitacion = 'doble'"];
+
+    // Nodos de búsqueda por Clima
+    // Clima -> ClimaClima;
+    // ClimaClima -> PresupuestoClima;
+    PresupuestoClima -> TipoHabitacionClima;
+    TipoHabitacionClima -> DistanciaClima;
+    DistanciaClima -> LlevaVehiculoClima;
+    LlevaVehiculoClima -> DiasEstadiaClima;
+    DiasEstadiaClima -> NumeroPersonasClima;
+    NumeroPersonasClima -> TiemposComidaClima;
+    TiemposComidaClima -> ConclusionCarroSimpleClima [label="TipoHabitacion = 'simple'"];
+    TiemposComidaClima -> ConclusionCarroDobleClima [label="TipoHabitacion = 'simple'"];
+// Nodos de búsqueda por Idioma
+//Idioma -> IdiomaIdioma;
+IdiomaIdioma -> PresupuestoIdioma;
+PresupuestoIdioma -> TipoHabitacionIdioma;
+TipoHabitacionIdioma -> DistanciaIdioma;
+DistanciaIdioma -> LlevaVehiculoIdioma;
+LlevaVehiculoIdioma -> DiasEstadiaIdioma;
+DiasEstadiaIdioma -> NumeroPersonasIdioma;
+NumeroPersonasIdioma -> TiemposComidaIdioma;
+TiemposComidaIdioma -> ConclusionCarroSimpleIdioma [label="TipoHabitacion = 'simple'"];
+TiemposComidaIdioma -> ConclusionCarroDobleIdioma [label="TipoHabitacion = 'doble'"];
+// Nodos de búsqueda por CantidadEstrellas
+CantidadEstrellas -> CantidadEstrellasEstrellas;
+CantidadEstrellasEstrellas -> PresupuestoEstrellas;
+PresupuestoEstrellas -> TipoHabitacionEstrellas;
+TipoHabitacionEstrellas -> DistanciaEstrellas;
+DistanciaEstrellas -> LlevaVehiculoEstrellas;
+LlevaVehiculoEstrellas -> DiasEstadiaEstrellas;
+DiasEstadiaEstrellas -> NumeroPersonasEstrellas;
+NumeroPersonasEstrellas -> TiemposComidaEstrellas;
+TiemposComidaEstrellas -> ConclusionCarroSimpleEstrellas [label="TipoHabitacion = 'simple'"];
+TiemposComidaEstrellas -> ConclusionCarroDobleEstrellas [label="TipoHabitacion = 'doble'"];
+
+// Nodos de conclusión
+ConclusionCarroSimple [shape=oval, label="ConclusionCarroSimple"];
+ConclusionCarroDoble [shape=oval, label="ConclusionCarroDoble"];
+ConclusionCarroSimpleM [shape=oval, label="ConclusionCarroSimpleM"];
+ConclusionCarroDobleM [shape=oval, label="ConclusionCarroDobleM"];
+ConclusionCarroSimpleC [shape=oval, label="ConclusionCarroSimpleC"];
+ConclusionCarroDobleC [shape=oval, label="ConclusionCarroDobleC"];
+ConclusionCarroSimpleClima [shape=oval, label="ConclusionCarroSimpleClima"];
+ConclusionCarroDobleClima [shape=oval, label="ConclusionCarroDobleClima"];
+ConclusionCarroSimpleIdioma [shape=oval, label="ConclusionCarroSimpleIdioma"];
+ConclusionCarroDobleIdioma [shape=oval, label="ConclusionCarroDobleIdioma"];
+ConclusionCarroSimpleEstrellas [shape=oval, label="ConclusionCarroSimpleEstrellas"];
+ConclusionCarroDobleEstrellas [shape=oval, label="ConclusionCarroDobleEstrellas"];
+
+// Conexiones entre nodos de presupuesto
+Barato -> TipoHabitacion [label="Monto >= 2500"];
+Moderado -> TipoHabitacionM [label="Monto > 5000"];
+Caro -> TipoHabitacionC [label="Monto > 5000"];
+
+// Conexiones entre nodos de búsqueda por Clima
+Clima -> ClimaClima;
+ClimaClima -> PresupuestoClima;
+
+
+
+// Nodos de conclusión
+ConclusionCarroSimple [shape=oval, label="ConclusionCarroSimple"];
+ConclusionCarroDoble [shape=oval, label="ConclusionCarroDoble"];
+ConclusionCarroSimpleM [shape=oval, label="ConclusionCarroSimpleM"];
+ConclusionCarroDobleM [shape=oval, label="ConclusionCarroDobleM"];
+ConclusionCarroSimpleC [shape=oval, label="ConclusionCarroSimpleC"];
+ConclusionCarroDobleC [shape=oval, label="ConclusionCarroDobleC"];
+ConclusionCarroSimpleClima [shape=oval, label="ConclusionCarroSimpleClima"];
+ConclusionCarroDobleClima [shape=oval, label="ConclusionCarroDobleClima"];
+ConclusionCarroSimpleIdioma [shape=oval, label="ConclusionCarroSimpleIdioma"];
+ConclusionCarroDobleIdioma [shape=oval, label="ConclusionCarroDobleIdioma"];
+ConclusionCarroSimpleEstrellas [shape=oval, label="ConclusionCarroSimpleEstrellas"];
+ConclusionCarroDobleEstrellas [shape=oval, label="ConclusionCarroDobleEstrellas"];
+
+
+Idioma -> IdiomaIdioma;
+
+
+TiemposComidaEstrellas -> ConclusionCarroSimpleEstrellas;
+TiemposComidaEstrellas -> ConclusionCarroDobleEstrellas;
+}

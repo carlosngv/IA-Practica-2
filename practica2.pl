@@ -13,6 +13,12 @@ check_clima(CLIMA) :-
 % * departamento(id, nombre, tiempoviaje, lenguajelocal, clima, pasaje)
 
 departamento(1, peten, 8, espanol, tropical, 600).
+hotel(1,'Camino Real','14 calle zona 10',4,100,200,50,14,7).
+cliente(1, jose, morales, guatemala, 27, soltero, vacaciones).
+registro(1, 10, 30, '10/01/2021', 4, 3).
+trabajador(1, 'Jose Hernandez', 'Chef', 1).
+
+departamento(1, peten, 8, espanol, tropical, 600).
 departamento(2, izabal, 5, espanol, calor, 200).
 departamento(3, alta_verapaz, 6, espanol, frio, 300).
 departamento(4, quiche, 5, katchikel, frio, 400).
@@ -478,7 +484,7 @@ presupuesto():- write("Has escogido por presupuesto"),
     nl,
     read(PRESUPUESTO),
     nl,
-    analisispresupuesto(PRESUPUESTO, '').
+    analisispresupuesto(PRESUPUESTO).
 
 clima():- write("Has escogido por clima"),
     nl,
@@ -1243,19 +1249,50 @@ mostrar_reporte_3(NombreTrabajador):-
 
 
 
-reporte4():-
 
-    write('== Departamentos y hotel con más reservaciones, en clima calor =='),
-    nl,
-    departamento(IDDepartamento, NombreDepartamento, _, _, Clima, _),
-    hotel(IDHotel,NombreHotel,_,_,_,_,_,IDDepartamento,_),
+conteo_reservaciones(Departamento, Count) :-
+    departamento(Departamento, _, _, _, Calor, _),
+    findall(Registro, registro(_, _, Hotel, _, _, _), Registros),
+    conteo_reservaciones_helper(Departamento, Registros, Count).
 
+conteo_reservaciones_helper(_, [], 0).
+
+conteo_reservaciones_helper(Departamento, [registro(_, _, Hotel, _, _, _) | Registros], Count) :-
+    hotel(Hotel, _, _, _, _, _, _, Departamento, _),
+    conteo_reservaciones_helper(Departamento, Registros, Count1),
+    Count is Count1 + 1.
+conteo_reservaciones_helper(Departamento, [_ | Registros], Count) :-
+    conteo_reservaciones_helper(Departamento, Registros, Count).
+
+% Regla para obtener el departamento con más reservaciones en clima calor
+departamento_mas_reservaciones(Departamento, Count) :-
+    departamento(_, Departamento, _, _, Calor, _),
+    findall(Count-Departamento, conteo_reservaciones(Departamento, Count), Pares),
+    max_list(Pares, Count-Departamento),
+    format('Departamento con más reservaciones en clima calor: ~w (Reservaciones: ~w)~n', [Departamento, Count]).
+
+% Regla para obtener el hotel con más reservaciones en clima calor
+hotel_mas_reservaciones(Hotel, Count) :-
+    hotel(Hotel, _, _, _, _, _, _, Departamento, _),
+    conteo_reservaciones(Departamento, Count),
+    findall(Count-Hotel, (hotel(Hotel, _, _, _, _, _, _, D, _), departamento(D, _, _, _, calor, _)), Pares),
+    max_list(Pares, Count-Hotel),
+    format('Hotel con más reservaciones en clima calor: ~w (Reservaciones: ~w)~n', [Hotel, Count]).
+
+% Departamentos y hotel con más reservaciones, en clima calor
+reporte4() :-
+    write(' == Departamentos y hotel con más reservaciones, en clima calor == '), nl,
+    findall(Reservations, registro(_,_,_,_,_,Reservations), ReservationsList),
+    max_list(ReservationsList, MaxReservations),
+    registro(_,_,IDHotel,_,_,_),
+    hotel(IDHotel,NombreHotel,_,_,_,_,_,_,_),
+    departamento(IDDepartamento,NombreDepartamento,_,_,Clima,_),
     Clima == 'calor',
-    mostrar_reporte_4(NombreDepartamento,NombreHotel),
-    reportes().
+mostrar_reporte_4(NombreHotel, NombreDepartamento).
 
-mostrar_reporte_4(NombreDepartamento,NombreHotel):-
-    format('Departamento: ~a | Hotel: ~a', [NombreDepartamento,NombreHotel]), nl, fail, true.
+
+mostrar_reporte_4(NombreHotel, NombreDepartamento):-
+    format(' Hotel: ~a | Departamento: ~a', [NombreHotel, NombreDepartamento]).
 
 reporte5():-
     write('==  Nombre de clientes extranjeros hospedados en departamentos de habla espanol =='),
@@ -1299,7 +1336,7 @@ reporte7():-
     hotel(IDHotel,NombreHotel,_,_,_,_,_,IDDepartamento,_),
     registro(_, IDCliente, IDHotel, _, NumEstadia, _),
 
-    NumEstadia > 2,
+    NumEstadia < 2,
     Idioma == 'ingles',
     (PaisCliente=='italia'; PaisCliente=='espanol'; PaisCliente=='espanola'; PaisCliente=='inglaterra'; PaisCliente=='holanda'; PaisCliente=='costa_rica'; PaisCliente=='mexico'; PaisCliente=='venezuela'; PaisCliente=='usa'; PaisCliente=='el_salvador';PaisCliente=='honduras'),
     mostrar_reporte_7(NombreCliente, ApellidoCliente, PaisCliente, NombreHotel),
@@ -1311,18 +1348,19 @@ mostrar_reporte_7(NombreCliente, ApellidoCliente, PaisCliente, NombreHotel):-
 reporte8():-
     write('==  País que reservo en Peten =='),
     nl,
+    hotel(IDHotel,NombreHotel,_,_,_,_,_,IDDepartamento,_),
     cliente(IDCliente, _,_, PaisCliente, _, _, _),
     departamento(IDDepartamento, NombreDepartamento, _, _, _, _),
-    hotel(IDHotel,NombreHotel,DireccionHotel,_,_,_,_,IDDepartamento,_),
     registro(_, IDCliente, IDHotel, _, _, _),
 
-
+    IDCliente == IDCliente,
+    IDDepartamento == IDDepartamento,
     NombreDepartamento == 'peten',
-    mostrar_reporte_8(PaisCliente, NombreHotel, NombreDepartamento),
+    mostrar_reporte_8(PaisCliente),
     reportes().
 
-mostrar_reporte_8(PaisCliente, NombreHotel, NombreDepartamento):-
-    format('Pais que reserva: ~a | Hotel: ~a | Departamento: ~a ', [PaisCliente, NombreHotel, NombreDepartamento]), nl, fail, true.
+mostrar_reporte_8(PaisCliente):-
+    format('Pais que reserva: ~a', [PaisCliente]), nl, fail, true.
 
 
 reporte9():-
@@ -1334,7 +1372,7 @@ reporte9():-
     registro(_, IDCliente, IDHotel, _, NumEstadia, Opiniones),
 
     NumEstadia >= 3,
-    Opiniones >= 6,
+    Opiniones > 6,
     EstadoCivil == 'casado',
     mostrar_reporte_9(NombreCliente, ApellidoCliente, NombreHotel, DireccionHotel),
     reportes().
